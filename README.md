@@ -19,5 +19,13 @@ In this prompt-based agent harness, this is essentially prompt optimization in 2
 After each run, the highest scoring prompt replaces the current best prompt. The loop runs for N iterations or until accuracy plateaus.
 
 ## Quick Start
+### Model: deepseek-r1:7b
+Why? 
+1. This is an open-source, cheap model that can run on a Mac with an M5 chip. Cost of compute becomes an important constraint when it comes to autonomous research.
+
+2. Deepseek-r1 has a reasoning block. We are trying to minimize the length of the chain-of-thought reasoning during decode, which dominates the cost for LLM compute. 
+
+In open source models without reasoning blocks, such as Qwen 2.5:7b, the cost is just token in + token out, neither of which should be minimized while optimizing performance. 
+
 ## What is Autoresearch
 ## What is an Agent Harness

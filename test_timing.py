@@ -5,7 +5,7 @@ start = time.time()
 
 response = ollama.chat(
     model="qwen2.5:7b",
-    messages=[{"role": "user", "content": "What is 17 * 23? Answer with just the number."}]
+    messages=[{"role": "user", "content": "What is 17 * 23? Is this correct according to Terrence Tao"}]
 )
 
 wall_clock = time.time() - start
