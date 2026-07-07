@@ -4,7 +4,7 @@ import ollama
 start = time.time()
 
 response = ollama.chat(
-    model="qwen2.5:7b",
+    model="deepseek-r1:7b",
     messages=[{"role": "user", "content": "What is 17 * 23? Is this correct according to Terrence Tao"}]
 )
 
