@@ -1,11 +1,13 @@
 import json
 import re
 import time
+import datetime
 import ollama
 
 MODEL = "deepseek-r1:7b"
 DATA_FILE = "gsm8k_sample.jsonl"
 SYSTEM_PROMPT = ""  # baseline: no system prompt at all
+
 
 def load_problems(path):
     problems = []
@@ -14,20 +16,23 @@ def load_problems(path):
             problems.append(json.loads(line))
     return problems
 
+
 def extract_ground_truth(answer_field):
     match = re.search(r"####\s*(-?[\d,]+(?:\.\d+)?)", answer_field)
     if not match:
         return None
     return float(match.group(1).replace(",", ""))
 
+
 def extract_model_answer(text):
     after_think = text.split("</think>")[-1] if "</think>" in text else text
     numbers = re.findall(r"-?\d[\d,]*\.?\d*", after_think)
     if not numbers:
         return None
-    return float(numbers[-1].replace(",", ""))
+    return float(numbers[-1].replace(",", "")), after_think
 
-def solve_problem(problem, system_prompt=SYSTEM_PROMPT):
+
+def solve_problem(problem, system_prompt):
     messages = []
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
@@ -36,14 +41,21 @@ def solve_problem(problem, system_prompt=SYSTEM_PROMPT):
     response = ollama.chat(model=MODEL, messages=messages)
     content = response["message"]["content"]
 
-    think_len = 0
+    think_text = ""
     if "<think>" in content and "</think>" in content:
         think_text = content.split("<think>")[1].split("</think>")[0]
-        think_len = len(think_text)
 
-    return {"content": content, "eval_count": response["eval_count"], "think_char_len": think_len}
+    return {
+        "content": content,
+        "think_text": think_text,
+        "think_char_len": len(think_text),
+        "eval_count": response.get("eval_count", 0),
+        "prompt_eval_count": response.get("prompt_eval_count", 0),
+        "total_duration_s": response.get("total_duration", 0) / 1e9,
+    }
 
-def run_baseline(limit=None):
+
+def run_baseline(limit=None, system_prompt=SYSTEM_PROMPT, model=MODEL, out_file="baseline_results.json"):
     problems = load_problems(DATA_FILE)
     if limit:
         problems = problems[:limit]
@@ -52,28 +64,58 @@ def run_baseline(limit=None):
     for i, problem in enumerate(problems):
         gt = extract_ground_truth(problem["answer"])
         start = time.time()
-        out = solve_problem(problem)
+        out = solve_problem(problem, system_prompt)
         elapsed = time.time() - start
 
-        pred = extract_model_answer(out["content"])
+        pred, after_think = extract_model_answer(out["content"])
         correct = pred is not None and gt is not None and abs(pred - gt) < 1e-4
 
         results.append({
-            "index": i, "ground_truth": gt, "predicted": pred, "correct": correct,
-            "eval_count": out["eval_count"], "think_char_len": out["think_char_len"], "elapsed": elapsed,
+            "index": i,
+            "question": problem["question"],
+            "ground_truth_raw": problem["answer"],
+            "ground_truth": gt,
+            "predicted": pred,
+            "correct": correct,
+            "full_response": out["content"],
+            "think_text": out["think_text"],
+            "think_char_len": out["think_char_len"],
+            "answer_after_think": after_think,
+            "eval_count": out["eval_count"],
+            "prompt_eval_count": out["prompt_eval_count"],
+            "total_duration_s": out["total_duration_s"],
+            "elapsed_wallclock_s": elapsed,
         })
 
         status = "✓" if correct else "✗"
-        print(f"[{i+1}/{len(problems)}] {status} pred={pred} gt={gt} tokens={out['eval_count']} time={elapsed:.1f}s")
+        print(f"[{i+1}/{len(problems)}] {status} pred={pred} gt={gt} "
+              f"tokens={out['eval_count']} think_chars={out['think_char_len']} time={elapsed:.1f}s")
 
     accuracy = sum(r["correct"] for r in results) / len(results)
     avg_tokens = sum(r["eval_count"] for r in results) / len(results)
+    avg_think_chars = sum(r["think_char_len"] for r in results) / len(results)
     print(f"\nAccuracy: {accuracy:.1%}")
     print(f"Avg tokens/response: {avg_tokens:.1f}")
+    print(f"Avg think chars: {avg_think_chars:.1f}")
 
-    with open("baseline_results.json", "w") as f:
-        json.dump(results, f, indent=2)
-    return results
+    output = {
+        "metadata": {
+            "timestamp": datetime.datetime.now().isoformat(),
+            "model": model,
+            "system_prompt": system_prompt,
+            "data_file": DATA_FILE,
+            "n_problems": len(problems),
+            "accuracy": accuracy,
+            "avg_tokens": avg_tokens,
+            "avg_think_chars": avg_think_chars,
+        },
+        "results": results,
+    }
+
+    with open(out_file, "w") as f:
+        json.dump(output, f, indent=2)
+    return output
+
 
 if __name__ == "__main__":
-    run_baseline(limit=5)  # sanity check on 5 before committing to all 50
+    run_baseline(limit=5)
