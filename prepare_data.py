@@ -1,7 +1,7 @@
 import json
 import random
 
-random.seed(42)  # fixed seed so your sample is reproducible across runs
+random.seed(42)
 
 with open("gsm8k_test.jsonl") as f:
     lines = f.readlines()
