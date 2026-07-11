@@ -26,11 +26,19 @@ def extract_ground_truth(answer_field):
 
 def extract_model_answer(text):
     after_think = text.split("</think>")[-1] if "</think>" in text else text
-    numbers = re.findall(r"-?\d[\d,]*\.?\d*", after_think)
-    if not numbers:
-        return None
-    return float(numbers[-1].replace(",", "")), after_think
 
+    # Prefer \boxed{...} if present — it's the model's explicit final-answer marker
+    boxed_match = re.search(r"\\boxed\{([^}]*)\}", after_think)
+    search_text = boxed_match.group(1) if boxed_match else after_think
+
+    # Strip LaTeX spacing commands (\!, \,, \;, \:) and stray backslashes/dollar signs
+    cleaned = re.sub(r"\\[!,;:]", "", search_text)
+    cleaned = cleaned.replace("\\", "").replace("$", "")
+
+    numbers = re.findall(r"-?\d[\d,]*\.?\d*", cleaned)
+    if not numbers:
+        return None, after_think
+    return float(numbers[-1].replace(",", "")), after_think
 
 def solve_problem(problem, system_prompt):
     messages = []
@@ -39,21 +47,15 @@ def solve_problem(problem, system_prompt):
     messages.append({"role": "user", "content": problem["question"]})
 
     response = ollama.chat(model=MODEL, messages=messages)
-    content = response["message"]["content"]
-
-    think_text = ""
-    if "<think>" in content and "</think>" in content:
-        think_text = content.split("<think>")[1].split("</think>")[0]
 
     return {
-        "content": content,
-        "think_text": think_text,
-        "think_char_len": len(think_text),
-        "eval_count": response.get("eval_count", 0),
-        "prompt_eval_count": response.get("prompt_eval_count", 0),
-        "total_duration_s": response.get("total_duration", 0) / 1e9,
+        "content": response.message.content,
+        "think_text": response.message.thinking or "",
+        "think_char_len": len(response.message.thinking or ""),
+        "eval_count": response.eval_count,
+        "prompt_eval_count": response.prompt_eval_count,
+        "total_duration_s": response.total_duration / 1e9,
     }
-
 
 def run_baseline(limit=None, system_prompt=SYSTEM_PROMPT, model=MODEL, out_file="baseline_results.json"):
     problems = load_problems(DATA_FILE)
@@ -111,11 +113,10 @@ def run_baseline(limit=None, system_prompt=SYSTEM_PROMPT, model=MODEL, out_file=
         },
         "results": results,
     }
-
-    with open(out_file, "w") as f:
-        json.dump(output, f, indent=2)
-    return output
+    # with open(out_file, "w") as f:
+    #     json.dump(output, f, indent=2)
+    # return output
 
 
 if __name__ == "__main__":
-    run_baseline(limit=5)
+    run_baseline(limit=1)
