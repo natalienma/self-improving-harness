@@ -33,3 +33,9 @@ In open source models without reasoning blocks, such as Qwen 2.5:7b, the cost is
 
 ## What is Autoresearch
 ## What is an Agent Harness
+
+## Why compress reasoning?
+Here is an example of a thinking block through a math problem:
+``` thinking="\nAlright, so I need to figure out how much money the girls raised in total for the carnival. Let me read the problem again carefully. Hmm, okay. So we have two pairs here: Kim and Alexandra, and Maryam and Sarah. I need to find the total amount raised by all four girls.\n\nLet me break it down step by step....                                                                                                                                                \n\nWhich is the same as adding them one by one or grouping in any way, resulting in $2180. So that should be our total.\n\nTherefore, after careful consideration and multiple methods of addition, I'm confident the total money raised by all four girls is $2180.```
+
+This block ran through 4 different reasoning methods and consumed ~1800 tokens
