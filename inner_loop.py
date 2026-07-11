@@ -57,13 +57,13 @@ def solve_problem(problem, system_prompt):
         "total_duration_s": response.total_duration / 1e9,
     }
 
-def run_baseline(limit=None, system_prompt=SYSTEM_PROMPT, model=MODEL, out_file="baseline_results.json"):
+def run_baseline(limit=None, system_prompt=SYSTEM_PROMPT, model=MODEL, out_file="small_test.json"):
     problems = load_problems(DATA_FILE)
     if limit:
         problems = problems[:limit]
     results = []
 
-    for i, problem in enumerate(problems):
+    for i, problem in enumerate(problems[1:]):
         gt = extract_ground_truth(problem["answer"])
         start = time.time()
         out = solve_problem(problem, system_prompt)
@@ -113,10 +113,10 @@ def run_baseline(limit=None, system_prompt=SYSTEM_PROMPT, model=MODEL, out_file=
         },
         "results": results,
     }
-    # with open(out_file, "w") as f:
-    #     json.dump(output, f, indent=2)
-    # return output
+    with open(out_file, "w") as f:
+        json.dump(output, f, indent=2)
+    return output
 
 
 if __name__ == "__main__":
-    run_baseline(limit=1)
+    run_baseline(limit=2)

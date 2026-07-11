@@ -1,0 +1,30 @@
+{
+  "metadata": {
+    "timestamp": "2026-07-11T12:57:44.400068",
+    "model": "deepseek-r1:7b",
+    "system_prompt": "",
+    "data_file": "gsm8k_sample.jsonl",
+    "n_problems": 2,
+    "accuracy": 1.0,
+    "avg_tokens": 458.0,
+    "avg_think_chars": 599.0
+  },
+  "results": [
+    {
+      "index": 0,
+      "question": "Kalinda is working on a 360 piece puzzle with her mom. Kalinda can normally add 4 pieces per minute. Her mom can typically place half as many pieces per minute as Kalinda.  How many hours will it take them to complete this puzzle?",
+      "ground_truth_raw": "Her mom places 2 pieces per minute because 4 / 2 = <<4/2=2>>2\nOn average they get in 6 pieces per minute because 4 + 2 = <<4+2=6>>6\nIt will take 60 minutes to complete the puzzle because 360 / 6 = <<360/6=60>>60\nIt will take one hour because 60 / 60 = <<60/60=1>>1\n#### 1",
+      "ground_truth": 1.0,
+      "predicted": 1.0,
+      "correct": true,
+      "full_response": "\n\nTo determine how long it will take Kalinda and her mom to complete the 360-piece puzzle together, follow these steps:\n\n1. **Determine Individual Rates:**\n   - **Kalinda's Rate:** She can add **4 pieces per minute**.\n   - **Mom's Rate:** She can add half of Kalinda's rate, so:\n     \\[\n     \\text{Mom's Rate} = \\frac{4}{2} = 2 \\text{ pieces per minute}\n     \\]\n\n2. **Calculate Combined Rate:**\n   - Together, they can add:\n     \\[\n     \\text{Combined Rate} = 4 + 2 = 6 \\text{ pieces per minute}\n     \\]\n\n3. **Find Total Time Required:**\n   - To complete **360** pieces at a combined rate of **6 pieces per minute**, divide the total number of pieces by their combined rate:\n     \\[\n     \\text{Total Time (in minutes)} = \\frac{360}{6} = 60 \\text{ minutes}\n     \\]\n   \n4. **Convert Minutes to Hours:**\n   - Since there are **60** minutes in an hour:\n     \\[\n     \\text{Total Time (in hours)} = \\frac{60}{60} = 1 \\text{ hour}\n     \\]\n\n**Final Answer:**\n\n\\boxed{1 \\text{ hour}}",
+      "think_text": "\nTo determine how long it will take Kalinda and her mom to complete the 360-piece puzzle, I need to calculate their combined rate of adding pieces.\n\nFirst, Kalinda can add 4 pieces per minute. Her mom can add half that amount, so she can place 2 pieces per minute.\n\nTogether, they can add 6 pieces per minute (4 from Kalinda and 2 from her mom).\n\nNext, I'll find the total time required by dividing the total number of pieces by their combined rate:\n360 pieces \u00f7 6 pieces per minute = 60 minutes.\n\nFinally, to convert the time into hours, I divide the total minutes by 60:\n60 minutes \u00f7 60 = 1 hour.\n",
+      "think_char_len": 599,
+      "answer_after_think": "\n\nTo determine how long it will take Kalinda and her mom to complete the 360-piece puzzle together, follow these steps:\n\n1. **Determine Individual Rates:**\n   - **Kalinda's Rate:** She can add **4 pieces per minute**.\n   - **Mom's Rate:** She can add half of Kalinda's rate, so:\n     \\[\n     \\text{Mom's Rate} = \\frac{4}{2} = 2 \\text{ pieces per minute}\n     \\]\n\n2. **Calculate Combined Rate:**\n   - Together, they can add:\n     \\[\n     \\text{Combined Rate} = 4 + 2 = 6 \\text{ pieces per minute}\n     \\]\n\n3. **Find Total Time Required:**\n   - To complete **360** pieces at a combined rate of **6 pieces per minute**, divide the total number of pieces by their combined rate:\n     \\[\n     \\text{Total Time (in minutes)} = \\frac{360}{6} = 60 \\text{ minutes}\n     \\]\n   \n4. **Convert Minutes to Hours:**\n   - Since there are **60** minutes in an hour:\n     \\[\n     \\text{Total Time (in hours)} = \\frac{60}{60} = 1 \\text{ hour}\n     \\]\n\n**Final Answer:**\n\n\\boxed{1 \\text{ hour}}",
+      "eval_count": 458,
+      "prompt_eval_count": 58,
+      "total_duration_s": 34.484677583,
+      "elapsed_wallclock_s": 34.49186611175537
+    }
+  ]
+}
