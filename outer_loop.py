@@ -31,7 +31,7 @@ def score_prompt(system_prompt, n_problems=5):
     return {"accuracy": meta["accuracy"], "avg_tokens": meta["avg_tokens"], "weighted_score": weighted}
 
 def run_outer_loop(n_generations=2, n_variants=3, n_problems=2, out_file="outer_loop_results.json"):
-    current_best_prompt = ""
+    current_best_prompt = "Solve the following math problem step by step, then give your final numeric answer in \\boxed{}."
     current_best = score_prompt(current_best_prompt, n_problems)
     history = [{"generation": 0, "prompt": current_best_prompt, **current_best}]
 
