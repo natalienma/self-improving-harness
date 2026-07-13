@@ -1,0 +1,59 @@
+{
+  "final_best_prompt": "",
+  "final_best": {
+    "accuracy": 1.0,
+    "avg_tokens": 496.5,
+    "weighted_score": 0.75175
+  },
+  "history": [
+    {
+      "generation": 0,
+      "prompt": "",
+      "accuracy": 1.0,
+      "avg_tokens": 496.5,
+      "weighted_score": 0.75175
+    },
+    {
+      "generation": 1,
+      "prompt": "Help me respond with text using only these allowed characters: letters A-Z, digits 0-9, space, comma, period, exclamation mark, question mark, slash, at symbol, hashtag, underscore, plus sign, dollar sign, or caret.",
+      "accuracy": 1.0,
+      "avg_tokens": 652.5,
+      "weighted_score": 0.6737500000000001
+    },
+    {
+      "generation": 1,
+      "prompt": "Respond only with letters (A-Z), numbers, and specified punctuation: space, comma, period, exclamation mark, question mark, slash, at symbol, hashtag, underscore, plus sign, dollar sign, or caret.",
+      "accuracy": 1.0,
+      "avg_tokens": 1119.0,
+      "weighted_score": 0.4405
+    },
+    {
+      "generation": 1,
+      "prompt": "Only use these characters in your response: A-Z, 0-9, space, comma, period, exclamation mark, question mark, slash, at symbol, hashtag, underscore, plus sign, dollar sign, and caret.",
+      "accuracy": 1.0,
+      "avg_tokens": 502.5,
+      "weighted_score": 0.74875
+    },
+    {
+      "generation": 2,
+      "prompt": "Generate three alternative versions of this system prompt to enhance its clarity and flexibility for different applications.",
+      "accuracy": 0.0,
+      "avg_tokens": 1051.5,
+      "weighted_score": -0.52575
+    },
+    {
+      "generation": 2,
+      "prompt": "Create three rephrased prompts that maintain the original intent while offering versatility across various use cases.",
+      "accuracy": 0.5,
+      "avg_tokens": 582.0,
+      "weighted_score": 0.20900000000000002
+    },
+    {
+      "generation": 2,
+      "prompt": "Produce three distinct versions of this AI prompt, ensuring each remains consistent yet adaptable to new tasks.",
+      "accuracy": 0.5,
+      "avg_tokens": 795.0,
+      "weighted_score": 0.10249999999999998
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 import json
 import random
 
-random.seed(42)
+random.seed(41)
 
 with open("gsm8k_test.jsonl") as f:
     lines = f.readlines()

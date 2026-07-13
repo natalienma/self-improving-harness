@@ -25,29 +25,29 @@ def extract_ground_truth(answer_field):
 
 
 def extract_model_answer(text):
-    after_think = text.split("</think>")[-1] if "</think>" in text else text
+    boxed_match = re.search(r"\\boxed\{([^}]*)\}", text)
+    search_text = boxed_match.group(1) if boxed_match else text
 
-    # Prefer \boxed{...} if present — it's the model's explicit final-answer marker
-    boxed_match = re.search(r"\\boxed\{([^}]*)\}", after_think)
-    search_text = boxed_match.group(1) if boxed_match else after_think
-
-    # Strip LaTeX spacing commands (\!, \,, \;, \:) and stray backslashes/dollar signs
     cleaned = re.sub(r"\\[!,;:]", "", search_text)
     cleaned = cleaned.replace("\\", "").replace("$", "")
 
     numbers = re.findall(r"-?\d[\d,]*\.?\d*", cleaned)
     if not numbers:
-        return None, after_think
-    return float(numbers[-1].replace(",", "")), after_think
+        return None, text
+    return float(numbers[-1].replace(",", "")), text
 
-def solve_problem(problem, system_prompt):
+
+def solve_problem(problem, system_prompt, max_tokens=1500):
     messages = []
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
     messages.append({"role": "user", "content": problem["question"]})
 
-    response = ollama.chat(model=MODEL, messages=messages)
-
+    response = ollama.chat(
+        model=MODEL,
+        messages=messages,
+        options={"num_predict": max_tokens},
+    )
     return {
         "content": response.message.content,
         "think_text": response.message.thinking or "",
@@ -57,13 +57,14 @@ def solve_problem(problem, system_prompt):
         "total_duration_s": response.total_duration / 1e9,
     }
 
-def run_baseline(limit=None, system_prompt=SYSTEM_PROMPT, model=MODEL, out_file="small_test.json"):
+
+def run_baseline(limit=None, system_prompt=SYSTEM_PROMPT, model=MODEL, out_file="baseline_results.json"):
     problems = load_problems(DATA_FILE)
     if limit:
         problems = problems[:limit]
     results = []
 
-    for i, problem in enumerate(problems[1:]):
+    for i, problem in enumerate(problems):
         gt = extract_ground_truth(problem["answer"])
         start = time.time()
         out = solve_problem(problem, system_prompt)
